@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.2'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id "io.qameta.allure" version "2.11.2"
+}
+
+group = 'favbetuatests'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    compileOnly 'org.projectlombok:lombok'
+//	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-testcontainers'
+    implementation 'org.testcontainers:junit-jupiter'
+
+    implementation 'org.assertj:assertj-core:3.24.2'
+    implementation 'org.apache.logging.log4j:log4j:2.8.2'
+    implementation 'org.awaitility:awaitility:3.0.0'
+    implementation 'org.testng:testng:6.14.3'
+
+    // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+    implementation 'org.seleniumhq.selenium:selenium-java:2.41.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.8.0'
+
+
+}
+
+test {
+    jvmArgs(['--enable-preview'])
+    useTestNG() {
+
+        if (!project.hasProperty("suiteFieName")) {
+            ext.suiteFileName = "BaseTestsSuite"
+            println "No particular suite name is provided -> running Base Tests"
+        } else {
+            println "Running next test suite: " + suiteFileName
+        }
+        suites "src/test/resources/" + suiteFileName + ".xml"
+
+
+    }
+}

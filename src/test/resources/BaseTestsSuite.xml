@@ -1,0 +1,22 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="BaseTestSuite" data-provider-thread-count="4" >
+
+    <test name="Get Books Tests">
+        <classes>
+            <class name="tests.api.GetBooksTests"/>
+        </classes>
+    </test>
+
+    <test name="Create Books Tests">
+        <classes>
+            <class name="tests.api.CreateBooksTests"/>
+        </classes>
+    </test>
+
+    <test name="Login Tests">
+        <classes>
+            <class name="tests.ui.FavbetTests"/>
+        </classes>
+    </test>
+
+</suite>
