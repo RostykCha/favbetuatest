@@ -1,5 +1,6 @@
 package automationframeworkexample.clients.ui.pages;
 
+
 import automationframeworkexample.clients.ui.DriverManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -9,11 +10,11 @@ import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper
 
 @Component
 @Scope("prototype")
-public class LivePage extends GeneralTablePage {
+public class FavoritesPage extends GeneralTablePage {
 
     @Autowired
-    public LivePage(DriverManager driverManager) {
+    public FavoritesPage(DriverManager driverManager) {
         super(driverManager);
-        logInfo("Opened Live page");
+        logInfo("Opened Favorites page");
     }
 }

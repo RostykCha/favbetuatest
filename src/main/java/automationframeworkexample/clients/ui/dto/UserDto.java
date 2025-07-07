@@ -8,13 +8,14 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 @Data
 public class UserDto {
-    private int id;
     private String name;
-    private String author;
-    private String publication;
-    private String category;
-    private int pages;
-    private double price;
+    private String email;
+    private String pass;
+
+    public UserDto(String email, String pass) {
+        this.email = email;
+        this.pass = pass;
+    }
 
     public String toJson() {
         // Jackson ObjectMapper for JSON conversion

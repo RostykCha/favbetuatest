@@ -16,9 +16,9 @@ public class WebDriverWrapper {
 
     public static WebDriver getChromeDriver() {
         if (driver == null) {
-            // Setup ChromeDriver using WebDriverManager
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
+            driver.manage().window().maximize();
         }
         return driver;
     }

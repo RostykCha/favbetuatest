@@ -1,22 +1,17 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="BaseTestSuite" data-provider-thread-count="4" >
 
-    <test name="Get Books Tests">
+    <test name="Favbet Api Tests">
         <classes>
-            <class name="tests.api.GetBooksTests"/>
+            <class name="tests.api.FavbetApiTests"/>
         </classes>
     </test>
 
-    <test name="Create Books Tests">
+    <test name="Favbet UI Tests">
         <classes>
-            <class name="tests.api.CreateBooksTests"/>
+            <class name="tests.ui.FavbetUiTests"/>
         </classes>
     </test>
 
-    <test name="Login Tests">
-        <classes>
-            <class name="tests.ui.FavbetTests"/>
-        </classes>
-    </test>
 
 </suite>

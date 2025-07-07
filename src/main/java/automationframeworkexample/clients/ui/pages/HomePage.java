@@ -1,28 +1,33 @@
 package automationframeworkexample.clients.ui.pages;
 
 import automationframeworkexample.clients.ui.BasePage;
-import automationframeworkexample.clients.ui.dto.UserDto;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import automationframeworkexample.clients.ui.DriverManager;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
+import static automationframeworkexample.clients.ui.utils.AppConstants.FAVBET_BASE_URL;
 
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class HomePage extends BasePage {
 
-    @FindBy(xpath = "//span[normalize-space()='Live']")
-    private WebElement liveLink;
-
-    public LivePage navigateToLivePage() {
-        logInfo("Navigate To Live Page");
-
-        liveLink.click();
-        return new LivePage();
+    public HomePage(DriverManager dm) {
+        super(dm);
     }
 
-    public LoginPage loginUser(UserDto userDto) {
-        logInfo(String.format("Login user \"%s\"", userDto));
+    public LoginPage navigateToLoginPage() {
+        loginLink.click();
+        return page(LoginPage.class);
+    }
 
-        liveLink.click();
-        return new LoginPage();
+    public RegisterPage navigateToRegisterPage() {
+        registerLink.click();
+        return page(RegisterPage.class);
+    }
+
+    public HomePage openHomePage() {
+        driver.get(FAVBET_BASE_URL);
+        return this;
     }
 }
