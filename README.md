@@ -4,7 +4,6 @@
 - Spring ![Spring](https://img.shields.io/badge/Spring-green)
 - TestNG ![TestNG](https://img.shields.io/badge/TestNG-orange)
 
-
 ## Project Key Features
 - RTM ![RTM](https://img.shields.io/badge/RTM-Traceability-blue)
 Requirement Traceability Matrix, Automation is a tool, so all AUTOMATION TESTS should be linked to TEST CASES, and they should be linked to USER STORIES
@@ -39,13 +38,13 @@ automation-framework-example
 ![Statistics](report-exmple/FavbetReport2.jpg)
 ![Timing](report-exmple/FavbetReport3.jpg)
 ![Screen](report-exmple/FavbetReport4.jpg)
-
-# Local run (Chrome needed)
-git clone https://github.com/your-org/automation-framework-example.git
+-------------------------------------------------------------------------------------
+- Local run (Chrome needed)
+git clone 
 cd automation-framework-example
 ./gradlew clean test                # head-less Chromium is auto-downloaded
 ./gradlew allureReport              # generates HTML report at build/allure-report
-# Container Run
+- Container Run
 docker build -t favbet-tests .
 docker run --rm favbet-tests               # default browser = chromium
 docker run --rm -e browser=firefox favbet-tests   # if Firefox is enabled
