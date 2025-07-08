@@ -44,7 +44,7 @@ public class LoginPage extends BasePage {
         logInfo("Click Login button");
         loginButton.click();
 
-        closeNotificationIfPresent();
+        waitUntilUserIsLogged();
         return page(ProfilePage.class);
     }
 }

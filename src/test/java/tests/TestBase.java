@@ -1,6 +1,7 @@
 package tests;
 
 import automationframeworkexample.FrameworkSpringConfiguration;
+import automationframeworkexample.clients.api.FavbetApiClient;
 import automationframeworkexample.clients.ui.DriverManager;
 import automationframeworkexample.clients.ui.pages.HomePage;
 import automationframeworkexample.clients.ui.utils.retry.AutomationListenerAdapter;
@@ -18,6 +19,8 @@ public class TestBase extends AbstractTestNGSpringContextTests {
 
     @Autowired protected ApplicationContext ctx;
     @Autowired protected DriverManager dm;
+
+    @Autowired protected FavbetApiClient favbetApiClient;
 
     @DataProvider(name = "userLoginDataProvider", parallel = true)
     public Object[][] userLoginDataProvider() {

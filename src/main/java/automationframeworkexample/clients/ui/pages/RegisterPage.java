@@ -5,13 +5,9 @@ import automationframeworkexample.clients.ui.DriverManager;
 import automationframeworkexample.clients.ui.dto.UserDto;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.time.Duration;
 
 import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
 
@@ -25,8 +21,6 @@ public class RegisterPage extends BasePage {
     private WebElement passField;
     @FindBy(xpath = "//button[@data-role='register-submit-button']")
     private WebElement registerButton;
-    @FindBy(css = "[data-role='user-logo-header']")
-    private WebElement profileIcon;
 
     @Autowired
     public RegisterPage(DriverManager driverManager) {
@@ -46,14 +40,6 @@ public class RegisterPage extends BasePage {
         logInfo("Click Register button");
         registerButton.click();
 
-        return this;
-    }
-
-    public RegisterPage waitUntilRegistered() {
-        logInfo("Wait until registration is confirmed");
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOf(profileIcon));
-        logInfo("Registration confirmed – profile link visible");
         return this;
     }
 }

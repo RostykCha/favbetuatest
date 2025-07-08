@@ -2,7 +2,8 @@ package automationframeworkexample.clients.ui;
 
 import automationframeworkexample.clients.ui.pages.FavoritesPage;
 import automationframeworkexample.clients.ui.pages.LivePage;
-import automationframeworkexample.clients.ui.pages.RegisterPage;
+import automationframeworkexample.clients.ui.pages.SettingsPage;
+import automationframeworkexample.clients.ui.pages.YoutubePage;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.NoSuchElementException;
 
+import static automationframeworkexample.clients.ui.DriverManager.scrollToCenter;
+import static automationframeworkexample.clients.ui.utils.AppConstants.LONG_WAIT;
+import static automationframeworkexample.clients.ui.utils.AppConstants.SHORT_WAIT;
 import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
 
 @Component
@@ -28,8 +32,7 @@ import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper
 public abstract class BasePage {
 
     public final WebDriver driver;
-    private final Duration SHORT_WAIT = Duration.ofSeconds(1);
-    private final Duration LONG_WAIT = Duration.ofSeconds(2);
+
     @FindBy(xpath = "//span[normalize-space()='Live']")
     protected WebElement liveLink;
     @FindBy(xpath = "//*[@data-role='sports-favorites-link' or @data-role='slideItem_favorite']")
@@ -38,14 +41,22 @@ public abstract class BasePage {
     protected WebElement loginLink;
     @FindBy(xpath = "//a[@data-role='header-register-button']")
     protected WebElement registerLink;
+    @FindBy(xpath = "//a[@data-role='user-menu-item-settings-toggle']")
+    protected WebElement settingsLink;
+    @FindBy(css = "[data-role='user-logo-header']")
+    private WebElement profileIcon;
+    @FindBy(xpath = "//a[contains(@href,'https://www.youtube.com/@favbetua')]")
+    private WebElement youtubeIcon;
     @FindBy(css = "[data-role='icon-notification-close']")
     private WebElement notificationClose;
+
+
     @Autowired
     private ApplicationContext ctx;
 
     @Autowired
     protected BasePage(DriverManager dm) {
-        this.driver = dm.get();
+        this.driver = dm.getDriver();
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, 10), this);
     }
 
@@ -54,11 +65,42 @@ public abstract class BasePage {
     }
 
     public LivePage navigateToLivePage() {
+        closeNotificationIfPresent();
+        logInfo("Navigate To Live Page");
         liveLink.click();
         return page(LivePage.class);
     }
 
+    public YoutubePage openYoutubeFromFooter() {
+        closeNotificationIfPresent();
+        scrollToCenter(driver, youtubeIcon);
+
+        String parent = driver.getWindowHandle();
+        int handlesBefore = driver.getWindowHandles().size();
+
+        youtubeIcon.click();                                       // opens new tab
+
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(d -> d.getWindowHandles().size() > handlesBefore);
+
+        String child = driver.getWindowHandles().stream()
+                .filter(h -> !h.equals(parent))
+                .findFirst()
+                .orElseThrow();
+
+        driver.switchTo().window(child);
+        return page(YoutubePage.class);      // Spring-wired YouTube page object
+    }
+
+    public SettingsPage navigateToSettingsPage() {
+        logInfo("Navigate To Settings Page");
+        profileIcon.click();
+        settingsLink.click();
+        return page(SettingsPage.class);
+    }
+
     public FavoritesPage navigateToFavoritesPage() {
+        logInfo("Navigate To Favorites Page");
         favoritesLink.click();
         return page(FavoritesPage.class);
     }
@@ -71,10 +113,19 @@ public abstract class BasePage {
             logInfo("Close notification popup");
             notificationClose.click();
 
-            new WebDriverWait(driver, LONG_WAIT)
+            new WebDriverWait(driver, SHORT_WAIT)
                     .until(ExpectedConditions.invisibilityOf(notificationClose));
 
         } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException ignored) {
         }
+    }
+
+    public BasePage waitUntilUserIsLogged() {
+        logInfo("Wait until login is confirmed");
+        closeNotificationIfPresent();
+        new WebDriverWait(driver, Duration.ofSeconds(LONG_WAIT.getSeconds())).pollingEvery(Duration.ofSeconds(1))
+                .until(ExpectedConditions.visibilityOf(profileIcon));
+        logInfo("Login confirmed – profile link visible");
+        return this;
     }
 }

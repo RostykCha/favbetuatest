@@ -6,6 +6,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static automationframeworkexample.clients.ui.utils.AppConstants.LONG_WAIT;
 import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
 
 @Component
@@ -23,7 +25,11 @@ import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper
 public abstract class GeneralTablePage extends BasePage {
 
     @FindBy(css = "div[data-role^='event-body-']")
-    private List<WebElement> rawRows;                       // fresh list every DOM read
+    private List<WebElement> rawRows;
+
+    @FindBy(xpath = "//div[@class='BuJhQ QBFqm']")
+    private WebElement tableBody;
+
 
     @Autowired
     protected GeneralTablePage(DriverManager driverManager) {
@@ -37,8 +43,6 @@ public abstract class GeneralTablePage extends BasePage {
                 .toList();
     }
 
-    /* -------------------------------------------------------------------- helpers */
-
     private EventRow findRowFlexible(String matchName) {
         String target = EventRow.canon(matchName);
         return getRows().stream()
@@ -50,7 +54,6 @@ public abstract class GeneralTablePage extends BasePage {
                 .orElseThrow(() -> new NoSuchElementException("Match not found: " + matchName));
     }
 
-    /* -------------------------------------------------------------------- read */
 
     public List<String> getAllFavorites() {
         return getRows().stream()
@@ -58,8 +61,6 @@ public abstract class GeneralTablePage extends BasePage {
                 .map(EventRow::getMatchName)
                 .toList();
     }
-
-    /* -------------------------------------------------------------------- bulk */
 
     public List<String> selectAllAvailableFavorites() {
         logInfo("Select all available favourites");
@@ -71,7 +72,6 @@ public abstract class GeneralTablePage extends BasePage {
         return selected;
     }
 
-    /* -------------------------------------------------------------------- single row actions */
 
     public void selectFavoriteByName(String matchName) {
         logInfo(String.format("Select favourite \"%s\"", matchName));
@@ -79,25 +79,31 @@ public abstract class GeneralTablePage extends BasePage {
     }
 
     public void removeFavoriteByName(String matchName) {
-        logInfo(String.format("Remove favourite \"%s\"", matchName));
+        logInfo("Remove favourite ");
 
         ExpectedCondition<Boolean> deselected = d -> {
             try {
-                EventRow row = findRowFlexible(matchName);  // always fresh DOM
+                EventRow row = findRowFlexible(matchName);
                 if (row.isFavorite()) {
-                    row.deselectFavoriteIfSelected();       // may trigger re-render
-                    return false;                           // keep waiting
+                    row.deselectFavoriteIfSelected();
+                    return false;
                 }
-                return true;                                // star already off
+                return true;
             } catch (StaleElementReferenceException e) {
-                return false;                               // retry on stale
+                return false;
             } catch (NoSuchElementException e) {
-                return true;                                // row disappeared – treat as removed
+                return true;
             }
         };
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .ignoring(StaleElementReferenceException.class)
                 .until(deselected);
+    }
+
+    public void refreshWaitForTableBody() {
+        driver.navigate().refresh();
+        new WebDriverWait(driver, LONG_WAIT)
+                .until(ExpectedConditions.visibilityOf(tableBody));
     }
 }

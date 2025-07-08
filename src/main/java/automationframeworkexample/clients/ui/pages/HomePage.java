@@ -17,11 +17,13 @@ public class HomePage extends BasePage {
     }
 
     public LoginPage navigateToLoginPage() {
+        closeNotificationIfPresent();
         loginLink.click();
         return page(LoginPage.class);
     }
 
     public RegisterPage navigateToRegisterPage() {
+        closeNotificationIfPresent();
         registerLink.click();
         return page(RegisterPage.class);
     }
