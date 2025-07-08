@@ -40,13 +40,12 @@ automation-framework-example
 ![Timing](report-exmple/FavbetReport3.jpg)
 ![Screen](report-exmple/FavbetReport4.jpg)
 
-### Local run (Chrome needed)
+# Local run (Chrome needed)
 git clone https://github.com/your-org/automation-framework-example.git
 cd automation-framework-example
 ./gradlew clean test                # head-less Chromium is auto-downloaded
 ./gradlew allureReport              # generates HTML report at build/allure-report
-
-### Container Run
+# Container Run
 docker build -t favbet-tests .
 docker run --rm favbet-tests               # default browser = chromium
 docker run --rm -e browser=firefox favbet-tests   # if Firefox is enabled
