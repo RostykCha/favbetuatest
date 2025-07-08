@@ -3,6 +3,8 @@ package automationframeworkexample.clients.ui;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -12,9 +14,11 @@ import java.util.Set;
 import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
 
 @Component
+@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class DriverManager {
 
-    private final ThreadLocal<WebDriver> holder = new ThreadLocal<>();
+    private final ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+
     private final WebDriverFactory factory;
 
     @Autowired
@@ -22,18 +26,6 @@ public class DriverManager {
         this.factory = factory;
     }
 
-    public WebDriver getDriver() {
-        if (holder.get() == null) holder.set(factory.newChromeDriver());
-        return holder.get();
-    }
-
-    public void quit() {
-        WebDriver d = holder.get();
-        if (d != null) {
-            d.quit();
-            holder.remove();           // guarantees next get() builds fresh driver
-        }
-    }
 
     public static void scrollToCenter(WebDriver driver, WebElement element) {
         ((JavascriptExecutor) driver)
@@ -54,16 +46,13 @@ public class DriverManager {
                 logInfo("Depth " + depth + " – try frame index " + i);
                 driver.switchTo().frame(frame);
 
-                boolean bodyVisible = !driver.findElements(By.tagName("body")).isEmpty();
-                if (bodyVisible) {
+                if (!driver.findElements(By.tagName("body")).isEmpty()) {
                     logInfo("Depth " + depth + " – switched to frame index " + i);
                     return true;
                 }
-
                 if (searchFramesRecursively(driver, depth + 1)) {
                     return true;
                 }
-
                 driver.switchTo().parentFrame();
             } catch (NoSuchFrameException | StaleElementReferenceException e) {
                 logInfo("Depth " + depth + " – stale or missing frame, resetting");
@@ -84,11 +73,32 @@ public class DriverManager {
         newHandles.removeAll(oldHandles);
         String newHandle = newHandles.iterator().next();
         driver.switchTo().window(newHandle);
-        return original;                       // return original so you can switch back
+        return original;
     }
 
     public static void closeCurrentAndReturn(WebDriver driver, String originalHandle) {
         driver.close();
         driver.switchTo().window(originalHandle);
     }
+
+    public WebDriver getDriver() {
+        if (tlDriver.get() == null) {
+            tlDriver.set(factory.build());
+        }
+        return tlDriver.get();
+    }
+
+    public void startFreshDriver() {
+        quit();
+        tlDriver.set(factory.build());
+    }
+
+    public void quit() {
+        WebDriver d = tlDriver.get();
+        if (d != null) {
+            d.quit();
+            tlDriver.remove();
+        }
+    }
 }
+

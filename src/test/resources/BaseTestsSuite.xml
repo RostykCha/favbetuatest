@@ -1,17 +1,9 @@
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="BaseTestSuite" data-provider-thread-count="4" >
-
-    <test name="Favbet Api Tests">
-        <classes>
-            <class name="tests.api.FavbetApiTests"/>
-        </classes>
-    </test>
-
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Favbet UI Suite" parallel="methods" thread-count="5" data-provider-thread-count="5" verbose="2">
+    <parameter name="favbet.users" value="5"/>
     <test name="Favbet UI Tests">
         <classes>
             <class name="tests.ui.FavbetUiTests"/>
         </classes>
     </test>
-
-
 </suite>

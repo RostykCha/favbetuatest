@@ -8,7 +8,6 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 @Data
 public class UserDto {
-    private String name;
     private String email;
     private String pass;
 

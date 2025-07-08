@@ -7,61 +7,51 @@ import automationframeworkexample.clients.ui.pages.LivePage;
 import automationframeworkexample.clients.ui.pages.SettingsPage;
 import automationframeworkexample.clients.ui.utils.retry.AutomationRetry;
 import automationframeworkexample.clients.ui.utils.wrappers.TestCaseDocumentationId;
-import org.junit.AfterClass;
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.JavascriptExecutor;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 import tests.TestBase;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
 import static automationframeworkexample.clients.ui.utils.wrappers.TestDataRandomizer.getRandomProperEmailFormat;
 import static automationframeworkexample.clients.ui.utils.wrappers.TestDataRandomizer.getRandomProperPass;
 
 public class FavbetUiTests extends TestBase {
-    UserDto userDto;
 
-    @BeforeClass
-    public void doBeforePreparations() {
-        logInfo("[Suite setup] Generating random credentials");
-        userDto = new UserDto(getRandomProperEmailFormat(), getRandomProperPass());
+    private static final int USERS_TO_CREATE = Integer.parseInt(System.getProperty("favbet.users", "3"));
 
-        logInfo("[Suite setup] Opening home page");
-        ctx.getBean(HomePage.class)
-                .openHomePage()
-                .navigateToRegisterPage()
-                .registerUser(userDto)
-                .waitUntilUserIsLogged();
-        logInfo("[Suite setup] User registered and verified as logged in: " + userDto.getEmail());
+    @BeforeClass(alwaysRun = true)
+    public void seedUsers() {
+        logInfo("[Suite setup] Creating " + USERS_TO_CREATE + " fresh test users via UI");
 
-        logInfo("[Suite setup] Closing browser after registration");
-        dm.quit();
-    }
-
-    @BeforeMethod
-    public void clearBrowserCache() {
-        logInfo("[Test setup] Clearing browser cache, cookies, and storage");
-        try {
-            if (dm.getDriver() != null) {
-                dm.getDriver().manage().deleteAllCookies();
-                ((JavascriptExecutor) dm.getDriver())
-                        .executeScript("window.localStorage.clear(); window.sessionStorage.clear();");
-                logInfo("[Test setup] Browser data cleared successfully");
-            } else {
-                logInfo("[Test setup] Driver is null – nothing to clear");
+        IntStream.range(0, USERS_TO_CREATE).forEach(i -> {
+            UserDto user = new UserDto(getRandomProperEmailFormat(), getRandomProperPass());
+            try {
+                ctx.getBean(HomePage.class)
+                        .openHomePage()
+                        .navigateToRegisterPage()
+                        .registerUser(user)
+                        .waitUntilUserIsLogged();
+                TEST_USERS.add(user);
+                logInfo("  – seeded user " + user.getEmail());
+            } finally {
+                dm.quit();
             }
-        } catch (Exception ex) {
-            logInfo("[Test setup] Could not clear browser data: " + ex.getMessage());
-        }
+        });
     }
 
-    @Test(retryAnalyzer = AutomationRetry.class)
+    @BeforeMethod(alwaysRun = true)
+    public void startDriver() {
+        logInfo("[Test setup] Start Fresh Driver");
+        dm.startFreshDriver();
+    }
+
+    @Test(dataProvider = "userLoginDataProvider", retryAnalyzer = AutomationRetry.class)
     @TestCaseDocumentationId(testCaseId = "001")
-    public void verifyFavoritesLogic_T001() {
+    public void verifyFavoritesLogic_T001(UserDto userDto) {
         logInfo("[T001] Start: verifyFavoritesLogic");
 
         HomePage home = ctx.getBean(HomePage.class);
@@ -109,9 +99,9 @@ public class FavbetUiTests extends TestBase {
         logInfo("[T001] End: verifyFavoritesLogic");
     }
 
-    @Test(retryAnalyzer = AutomationRetry.class)
+    @Test(dataProvider = "userLoginDataProvider", retryAnalyzer = AutomationRetry.class)
     @TestCaseDocumentationId(testCaseId = "002")
-    public void verifyYoutubeVide_T002() {
+    public void verifyYoutubeVide_T002(UserDto userDto) {
         logInfo("[T002] Start: verifyYoutubeVide");
 
         HomePage home = ctx.getBean(HomePage.class);
@@ -130,9 +120,9 @@ public class FavbetUiTests extends TestBase {
         logInfo("[T002] End: verifyYoutubeVide");
     }
 
-    @Test(retryAnalyzer = AutomationRetry.class)
+    @Test(dataProvider = "userLoginDataProvider", retryAnalyzer = AutomationRetry.class)
     @TestCaseDocumentationId(testCaseId = "003")
-    public void verifyLanguageAndThemeChangeLogic_T003() {
+    public void verifyLanguageAndThemeChangeLogic_T003(UserDto userDto) {
         logInfo("[T003] Start: verifyLanguageAndThemeChangeLogic");
 
         HomePage home = ctx.getBean(HomePage.class);
@@ -145,37 +135,28 @@ public class FavbetUiTests extends TestBase {
 
         settingsPage.cnahgeToUkrainianAndVerify();
         logInfo("[T003] Language changed to Ukrainian");
-
         settingsPage.changeToDarkThemeAndVerify();
         logInfo("[T003] Theme changed to Dark (UA)");
-
         settingsPage.changeToLightThemeAndVerify();
         logInfo("[T003] Theme changed back to Light (UA)");
 
         settingsPage.cnahgeToEnglishAndVerify();
         logInfo("[T003] Language changed to English");
-
         settingsPage.changeToDarkThemeAndVerify();
         logInfo("[T003] Theme changed to Dark (EN)");
-
         settingsPage.changeToLightThemeAndVerify();
         logInfo("[T003] Theme changed back to Light (EN)");
 
         logInfo("[T003] End: verifyLanguageAndThemeChangeLogic");
     }
 
-    @AfterClass()
+    @AfterMethod(alwaysRun = true)
+    public void killDriver() {
+        dm.quit();
+    }
+
+    @AfterClass(alwaysRun = true)
     public void closeAllDrivers() {
-        logInfo("[Suite teardown] Closing browser instances");
-        if (dm != null) {
-            try {
-                dm.quit();
-                logInfo("[Suite teardown] Browser closed successfully");
-            } catch (Exception ex) {
-                logInfo("[Suite teardown] Failed to close browser cleanly: " + ex.getMessage());
-            }
-        } else {
-            logInfo("[Suite teardown] WebDriver manager was null – nothing to close");
-        }
+        dm.quit();
     }
 }
