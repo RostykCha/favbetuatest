@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static automationframeworkexample.clients.ui.utils.AppConstants.LONG_WAIT;
+import static automationframeworkexample.AppConstants.LONG_WAIT;
 import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
 
 @Component

@@ -4,16 +4,14 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.Normalizer;
-import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static automationframeworkexample.clients.ui.utils.AppConstants.LONG_WAIT;
-import static automationframeworkexample.clients.ui.utils.AppConstants.SHORT_WAIT;
+import static automationframeworkexample.AppConstants.LONG_WAIT;
+import static automationframeworkexample.AppConstants.SHORT_WAIT;
 import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
 
 public class EventRow {

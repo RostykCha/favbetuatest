@@ -23,8 +23,8 @@ import java.time.Duration;
 import java.util.NoSuchElementException;
 
 import static automationframeworkexample.clients.ui.DriverManager.scrollToCenter;
-import static automationframeworkexample.clients.ui.utils.AppConstants.LONG_WAIT;
-import static automationframeworkexample.clients.ui.utils.AppConstants.SHORT_WAIT;
+import static automationframeworkexample.AppConstants.LONG_WAIT;
+import static automationframeworkexample.AppConstants.SHORT_WAIT;
 import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
 
 @Component

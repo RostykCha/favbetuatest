@@ -21,7 +21,8 @@ import static automationframeworkexample.clients.ui.utils.wrappers.TestDataRando
 
 public class FavbetUiTests extends TestBase {
 
-    private static final int USERS_TO_CREATE = Integer.parseInt(System.getProperty("favbet.users", "3"));
+    //because we have 3 threads in TestNG config
+    private static final int USERS_TO_CREATE = Integer.parseInt(System.getProperty("favbet.users", "2"));
 
     @BeforeClass(alwaysRun = true)
     public void seedUsers() {

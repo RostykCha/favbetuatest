@@ -1,10 +1,27 @@
-# Use the official OpenJDK base image with Java 11 (or any other desired version)
-FROM alpine:3.14
-FROM gradle:8.2.1-jdk17
+FROM gradle:8.2.1-jdk17-alpine
 
-# Set the working directory inside the container
+USER root
+RUN apk add --no-cache \
+      chromium \
+      chromium-chromedriver \
+      nss \
+      freetype \
+      ttf-dejavu \
+      dumb-init
+
+RUN ln -sf /usr/bin/chromium-browser /usr/local/bin/google-chrome \
+    && ln -sf /usr/lib/chromium/chromedriver /usr/local/bin/chromedriver
+
+ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV browser=chrome
+ENV _JAVA_OPTIONS="-Djava.awt.headless=true"
+
 WORKDIR /automation-framework-example
-# Copy the entire project directory to the container
-COPY . /automation-framework-example
+COPY . .
 
-CMD ["gradle","test"]
+
+RUN --mount=type=cache,target=/home/gradle/.gradle \
+    gradle clean testClasses --no-daemon
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]   # cleans PID 1 signals for Gradle
+CMD ["gradle", "test", "-x", "clean", "--no-daemon"]

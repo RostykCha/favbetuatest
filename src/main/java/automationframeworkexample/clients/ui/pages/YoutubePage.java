@@ -16,7 +16,7 @@ import java.util.List;
 
 import static automationframeworkexample.clients.ui.DriverManager.scrollToCenter;
 import static automationframeworkexample.clients.ui.DriverManager.switchToFirstAvailableFrame;
-import static automationframeworkexample.clients.ui.utils.AppConstants.LONG_WAIT;
+import static automationframeworkexample.AppConstants.LONG_WAIT;
 import static automationframeworkexample.clients.ui.utils.wrappers.LoggerWrapper.logInfo;
 
 @Component
