@@ -19,10 +19,36 @@ Just take a look at all statistics that it provides
 - Page Object Structure ![Client Structure](https://img.shields.io/badge/Client_Structure-OOP-yellow)
 It will make easier to develop UI tests
 
+## Project Structure
+automation-framework-example
+├─ src
+│  ├─ main/java
+│  │   └─ automationframeworkexample
+│  │       ├─ clients   ← API + UI page objects
+│  │       └─ utils     ← custom loggers, retry, wrappers
+│  └─ test/java
+│      └─ tests
+│          ├─ ui       ← TestNG UI suites
+│          └─ api      ← (future) API suites
+├─ Dockerfile
+├─ README.md
+└─ build.gradle.kts
+
 ## Project Report
-![Main Report Screen](report-exmple/mainscreen.png)
-![Statistics](report-exmple/statistics.png)
-![Suites](report-exmple/suites.png)
-![Timing](report-exmple/timing.png)
+![Main Report Screen](report-exmple/FavbetReport1.jpg)
+![Statistics](report-exmple/FavbetReport2.jpg)
+![Timing](report-exmple/FavbetReport3.jpg)
+![Screen](report-exmple/FavbetReport4.jpg)
+
+### Local run (Chrome needed)
+git clone https://github.com/your-org/automation-framework-example.git
+cd automation-framework-example
+./gradlew clean test                # head-less Chromium is auto-downloaded
+./gradlew allureReport              # generates HTML report at build/allure-report
+
+### Container Run
+docker build -t favbet-tests .
+docker run --rm favbet-tests               # default browser = chromium
+docker run --rm -e browser=firefox favbet-tests   # if Firefox is enabled
 
 
