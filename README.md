@@ -19,19 +19,23 @@ Just take a look at all statistics that it provides
 It will make easier to develop UI tests
 
 ## Project Structure
+```text
 automation-framework-example
-├─ src
-│  ├─ main/java
-│  │   └─ automationframeworkexample
-│  │       ├─ clients   ← API + UI page objects
-│  │       └─ utils     ← custom loggers, retry, wrappers
-│  └─ test/java
-│      └─ tests
-│          ├─ ui       ← TestNG UI suites
-│          └─ api      ← (future) API suites
-├─ Dockerfile
-├─ README.md
-└─ build.gradle.kts
+├── src
+│   ├── main
+│   │   └── java
+│   │       └── automationframeworkexample
+│   │           ├── clients   # API + UI page objects
+│   │           └── utils     # custom loggers, retry, wrappers
+│   └── test
+│       └── java
+│           └── tests
+│               ├── ui       # TestNG UI suites
+│               └── api      # (future) API suites
+├── Dockerfile
+├── README.md
+└── build.gradle.kts
+```
 
 ## Project Report
 ![Main Report Screen](report-exmple/FavbetReport1.jpg)
